@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - '3306:3306'
+    volumes:
+      - type: bind
+        source: ./data/mysql
+        target: /var/lib/mysql
+      - type: bind
+        source: ./mysql/conf.d
+        target: /etc/mysql/conf.d
+    networks:
+      - cdc-net
+networks:
+  cdc-net:
+    name: cdc-net
