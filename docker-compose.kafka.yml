@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - type: bind
+        source: ./data/kafka/zookeeper
+        target: /var/lib/zookeeper/data
+    networks:
+      - cdc-net
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - '9092:9092'
+    volumes:
+      - type: bind
+        source: ./data/kafka/kafka
+        target: /var/lib/kafka/data
+    networks:
+      - cdc-net
+
+  connect:
+    image: debezium/connect:latest
+    container_name: kafka-connect
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: my_connect_configs
+      OFFSET_STORAGE_TOPIC: my_connect_offsets
+      STATUS_STORAGE_TOPIC: my_connect_statuses
+    ports:
+      - '8083:8083'
+    volumes:
+      - type: bind
+        source: ./data/kafka/connect
+        target: /kafka/connect/data
+    networks:
+      - cdc-net
+
+networks:
+  cdc-net:
+    name: cdc-net
