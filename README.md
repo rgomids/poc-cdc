@@ -23,14 +23,14 @@ docker compose \
   -f docker-compose.druid.yml up -d
 ```
 
-The API will be available on `http://localhost:5000` and Druid's Router on `http://localhost:8888`.
+The API will be available on `http://localhost:8080` and Druid's Router on `http://localhost:8888`.
 
 ## API example
 
 Insert a new client:
 
 ```bash
-curl -X POST http://localhost:5000/clientes \
+curl -X POST http://localhost:8080/clientes \
   -H 'Content-Type: application/json' \
   -d '{"id":1,"nome":"Alice","email":"alice@example.com"}'
 ```
