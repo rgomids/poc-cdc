@@ -33,7 +33,7 @@ services:
       - cdc-net
 
   connect:
-    image: debezium/connect:latest
+    image: debezium/connect:2.7.3.Final
     container_name: kafka-connect
     depends_on:
       - kafka
